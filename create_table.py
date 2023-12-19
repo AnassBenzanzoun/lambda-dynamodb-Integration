@@ -1,26 +1,17 @@
 import uuid
 import boto3
 
-dynamodb = boto3.resource('dynamodb')
+dynamodb = boto3.resource("dynamodb")
 
 table = dynamodb.create_table(
-    TableName='users',
+    TableName="table-esame-AnassBenzanzoun",
     KeySchema=[
-        {
-            'AttributeName': 'pk',
-            'KeyType': 'HASH'
-        },
+        {"AttributeName": "pk", "KeyType": "HASH"},
     ],
     AttributeDefinitions=[
-        {
-            'AttributeName': 'pk',
-            'AttributeType': 'S'
-        },
+        {"AttributeName": "pk", "AttributeType": "S"},
     ],
-    ProvisionedThroughput={
-        'ReadCapacityUnits': 5,
-        'WriteCapacityUnits': 5
-    }
+    ProvisionedThroughput={"ReadCapacityUnits": 5, "WriteCapacityUnits": 5},
 )
 
 # Wait until the table exists.

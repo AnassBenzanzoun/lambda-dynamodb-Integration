@@ -1,62 +1,93 @@
 import boto3
 import json
-from botocore.exceptions import ClientError
 
-dynamodb = boto3.resource('dynamodb')
+dynamodb = boto3.resource("dynamodb")
+
 
 def lambda_handler(event, context):
-    table = dynamodb.Table('users')
+    table = dynamodb.Table("table-esame-AnassBenzanzoun")
 
-    try:
-        # Determine the operation
-        operation = event['queryStringParameters']['operation']
+    # UPDATE
+    if (
+        event.get("httpMethod") == "PUT"
+        and "body" in event
+        and "pathParameters" in event
+    ):
+        item = json.loads(event["body"])
+        pk = event["pathParameters"]["pk"]
+        expression = "SET " + ", ".join(f"{k}=:{k}" for k in item.keys())
+        table.update_item(
+            Key={"pk": pk},
+            UpdateExpression=expression,
+            ExpressionAttributeValues={f":{k}": v for k, v in item.items()},
+            ReturnValues="UPDATED_NEW",
+        )
+        return {"statusCode": 200, "body": json.dumps("Item updated.")}
 
-        if operation == 'create':
-            item = json.loads(event['body'])
-            table.put_item(Item=item)
-            return {
-                'statusCode': 200,
-                'body': json.dumps('Item created.')
-            }
+    else:
+        return {"statusCode": 400, "body": json.dumps("Invalid request.")}
 
-        elif operation == 'read':
-            uuid = event['queryStringParameters']['uuid']
-            response = table.get_item(Key={'pk': uuid})
-            return {
-                'statusCode': 200,
-                'body': json.dumps(response['Item'])
-            }
 
-        elif operation == 'update':
-            uuid = event['queryStringParameters']['uuid']
-            update_expression = event['queryStringParameters']['update_expression']
-            expression_attribute_values = json.loads(event['body'])
-            table.update_item(
-                Key={'pk': uuid},
-                UpdateExpression=update_expression,
-                ExpressionAttributeValues=expression_attribute_values
-            )
-            return {
-                'statusCode': 200,
-                'body': json.dumps('Item updated.')
-            }
+import boto3
+import json
+import uuid
 
-        elif operation == 'delete':
-            uuid = event['queryStringParameters']['uuid']
-            table.delete_item(Key={'pk': uuid})
-            return {
-                'statusCode': 200,
-                'body': json.dumps('Item deleted.')
-            }
+dynamodb = boto3.resource("dynamodb")
 
-        else:
-            return {
-                'statusCode': 400,
-                'body': json.dumps('Invalid operation.')
-            }
 
-    except ClientError as e:
-        return {
-            'statusCode': 400,
-            'body': json.dumps(str(e))
-        }
+def lambda_handler(event, context):
+    table = dynamodb.Table("table-esame-AnassBenzanzoun")
+
+    # CREATE
+    print(event["httpMethod"])
+    print(event["body"])
+    if event.get("httpMethod") == "POST" and event.get("body"):
+        print(event)
+        item = json.loads(event["body"])
+        item["pk"] = str(uuid.uuid4())
+        table.put_item(Item=item)
+        return {"statusCode": 200, "body": json.dumps("Item created.")}
+
+    else:
+        return {"statusCode": 400, "body": json.dumps("Invalid request.")}
+
+
+import boto3
+import json
+
+dynamodb = boto3.resource("dynamodb")
+
+
+def lambda_handler(event, context):
+    table = dynamodb.Table("table-esame-AnassBenzanzoun")
+
+    pk = event["queryStringParameters"]["pk"]
+    table.delete_item(Key={"pk": pk})
+    return {"statusCode": 200, "body": json.dumps("Item deleted.")}
+
+
+import boto3
+import json
+from boto3.dynamodb.conditions import Attr
+
+dynamodb = boto3.resource("dynamodb")
+
+
+def lambda_handler(event, context):
+    table = dynamodb.Table("table-esame-AnassBenzanzoun")
+
+    # SCAN
+    if "queryStringParameters" not in event or not event["queryStringParameters"]:
+        response = table.scan()
+        return {"statusCode": 200, "body": json.dumps(response["Items"])}
+
+    # READ GET ITEM
+    elif "Service" in event["queryStringParameters"]:
+        Service = event["queryStringParameters"]["Service"]
+        response = table.scan(FilterExpression=Attr("Service").eq(Service))
+
+        items = response["Items"]
+        return {"statusCode": 200, "body": json.dumps(items)}
+
+    else:
+        return {"statusCode": 400, "body": json.dumps("Invalid request.")}

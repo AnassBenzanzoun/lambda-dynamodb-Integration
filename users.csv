@@ -1,6 +1,16 @@
-username,first_name,last_name,email,age
-john_doe,John,Doe,john.doe@example.com,28
-jane_smith,Jane,Smith,jane.smith@example.com,35
-bob_jenkins,Bob,Jenkins,bob.jenkins@example.com,42
-alice_wilson,Alice,Wilson,alice.wilson@example.com,30
-mike_thompson,Mike,Thompson,mike.thompson@example.com,25
+Service,Category,Description,Use case,isRegional,isPracticioner
+EC2,Compute,Virtual servers in the cloud,Hosting applications,TRUE,TRUE
+S3,Storage,Scalable object storage,Backup and Restore,TRUE,TRUE
+RDS,Database,Managed relational database service,Application Data Storage,TRUE,TRUE
+Lambda,Compute,Serverless computing,Event-driven processing,TRUE,TRUE
+IAM,Security,Identity and Access Management,User Authentication,FALSE,TRUE
+Route53,Networking,DNS web service,Domain Management,TRUE,TRUE
+DynamoDB,Database,Fully managed NoSQL database,Scalable Applications,TRUE,TRUE
+Elastic Beanstalk,Compute,Deploy and manage applications,Application Deployment,TRUE,TRUE
+SNS,Application Integration,Push notification service,Message Broadcasting,TRUE,TRUE
+CloudFormation,Management Tools,Infrastructure as Code,Template Creation,TRUE,TRUE
+CloudFront,Networking,Content delivery network service,Content Delivery,TRUE,TRUE
+Kinesis,Analytics,Real-time data streaming,Data Processing,TRUE,TRUE
+ECS,Compute,Container management service,Container Orchestration,TRUE,TRUE
+Glacier,Storage,Low-cost archival storage,Data Archiving,TRUE,TRUE
+SQS,Application Integration,Managed message queues,Decoupling Microservices,TRUE,TRUE
