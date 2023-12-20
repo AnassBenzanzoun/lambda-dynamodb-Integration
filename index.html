@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fetch API Data</title>
+    <style>
+        body {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+        }
+        h1 {
+            font-family: 'Arial', sans-serif;
+            font-size: 2em;
+            color: #4CAF50;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: auto;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        tr:nth-child(even) {
+            background-color: #555;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>Fetch API Data</h1>
+    <div id="output"></div>
+
+    <script>
+        const API_URL = '';
+        const API_KEY = '';
+
+        window.onload = function() {
+            fetch(API_URL, {
+                method: 'GET',
+                headers: {
+                    'x-api-key': API_KEY
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                let table = '<table>';
+                let keys = ['Service', 'Category', 'isRegional', 'Description', 'Use case', 'isPracticioner'];
+                keys.forEach(key => {
+                    table += `<th>${key}</th>`;
+                });
+                data.forEach(item => {
+                    table += '<tr>';
+                    keys.forEach(key => {
+                        if (key in item && key !== 'pk') {
+                            table += `<td>${item[key]}</td>`;
+                        }
+                    });
+                    table += '</tr>';
+                });
+                table += '</table>';
+                document.getElementById('output').innerHTML = table;
+            })
+            .catch(error => console.error('Error:', error));
+        };
+    </script>
+</body>
+</html>

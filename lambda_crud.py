@@ -73,21 +73,32 @@ from boto3.dynamodb.conditions import Attr
 dynamodb = boto3.resource("dynamodb")
 
 
+import boto3
+import json
+from boto3.dynamodb.conditions import Attr
+
+dynamodb = boto3.resource("dynamodb")
+
 def lambda_handler(event, context):
     table = dynamodb.Table("table-esame-AnassBenzanzoun")
 
     # SCAN
     if "queryStringParameters" not in event or not event["queryStringParameters"]:
-        response = table.scan()
-        return {"statusCode": 200, "body": json.dumps(response["Items"])}
+        try:
+            response = table.scan()
+            return {"statusCode": 200, "body": json.dumps(response["Items"])}
+        except Exception as e:
+            return {"statusCode": 500, "body": json.dumps(str(e))}
 
     # READ GET ITEM
     elif "Service" in event["queryStringParameters"]:
         Service = event["queryStringParameters"]["Service"]
-        response = table.scan(FilterExpression=Attr("Service").eq(Service))
-
-        items = response["Items"]
-        return {"statusCode": 200, "body": json.dumps(items)}
+        try:
+            response = table.scan(FilterExpression=Attr("Service").eq(Service))
+            items = response["Items"]
+            return {"statusCode": 200, "body": json.dumps(items)}
+        except Exception as e:
+            return {"statusCode": 500, "body": json.dumps(str(e))}
 
     else:
         return {"statusCode": 400, "body": json.dumps("Invalid request.")}
